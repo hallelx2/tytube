@@ -1,6 +1,13 @@
 node_modules/
 dist/
 coverage/
+
+# Native rollup binaries are platform-pinned in optionalDependencies, so a
+# locally-generated lockfile breaks CI on other platforms. We rely on bun.lock
+# for reproducible bun installs and let `npm install` regenerate the lockfile
+# fresh on each Node CI job.
+package-lock.json
+
 *.log
 .DS_Store
 .env

@@ -20,20 +20,15 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         runtime: [node, bun]
-        include:
-          - runtime: node
-            node-version: '20'
-          - runtime: bun
-            node-version: '20' # vitest still spawns node sometimes
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Set up Node.js
+        if: matrix.runtime == 'node'
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: npm
+          node-version: '20'
 
       - name: Set up Bun
         if: matrix.runtime == 'bun'
@@ -41,22 +36,42 @@ jobs:
         with:
           bun-version: latest
 
+      # We deliberately don't commit a package-lock.json: native rollup
+      # binaries (used transitively by vitest/tsup) are pinned per-platform
+      # and a Windows-generated lockfile breaks Linux CI. Each job installs
+      # fresh against the registry, which only adds ~10s and avoids the bug.
+
       - name: Install dependencies (npm)
         if: matrix.runtime == 'node'
-        run: npm install --no-audit --no-fund
+        run: npm install --no-audit --no-fund --no-package-lock
 
       - name: Install dependencies (bun)
         if: matrix.runtime == 'bun'
-        run: bun install --frozen-lockfile
+        run: bun install --no-save
 
-      - name: Typecheck
-        run: npx tsc --noEmit
+      - name: Typecheck (node)
+        if: matrix.runtime == 'node'
+        run: npx --no-install tsc --noEmit
 
-      - name: Run tests
-        run: npx vitest run
+      - name: Typecheck (bun)
+        if: matrix.runtime == 'bun'
+        run: bunx tsc --noEmit
 
-      - name: Build
-        run: npx tsup
+      - name: Run tests (node)
+        if: matrix.runtime == 'node'
+        run: npx --no-install vitest run
+
+      - name: Run tests (bun)
+        if: matrix.runtime == 'bun'
+        run: bunx vitest run
+
+      - name: Build (node)
+        if: matrix.runtime == 'node'
+        run: npx --no-install tsup
+
+      - name: Build (bun)
+        if: matrix.runtime == 'bun'
+        run: bunx tsup
 
       - name: Verify build artifacts
         shell: bash

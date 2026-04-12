@@ -46,19 +46,18 @@ jobs:
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
-          cache: npm
 
       - name: Install dependencies
-        run: npm install --no-audit --no-fund
+        run: npm install --no-audit --no-fund --no-package-lock
 
       - name: Typecheck
-        run: npx tsc --noEmit
+        run: npx --no-install tsc --noEmit
 
       - name: Run tests
-        run: npx vitest run
+        run: npx --no-install vitest run
 
       - name: Build
-        run: npx tsup
+        run: npx --no-install tsup
 
       - name: Verify package contents
         run: npm pack --dry-run
