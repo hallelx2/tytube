@@ -1,6 +1,6 @@
 {
-  "name": "tytube",
-  "version": "0.1.0",
+  "name": "@hallelx/tytube",
+  "version": "0.1.1",
   "description": "A TypeScript port of pytube. Extract metadata and download YouTube videos without the YouTube Data API. Works in Node, Bun, and the browser.",
   "type": "module",
   "main": "./dist/index.cjs",

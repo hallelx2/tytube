@@ -4,13 +4,13 @@
 
 **A TypeScript port of [pytube](https://github.com/pytube/pytube). Extract YouTube metadata, list streams, and read captions — without the YouTube Data API.**
 
-[![npm version](https://img.shields.io/npm/v/tytube?color=cb3837&logo=npm&label=npm)](https://www.npmjs.com/package/tytube)
-[![npm downloads](https://img.shields.io/npm/dm/tytube?color=cb3837&logo=npm)](https://www.npmjs.com/package/tytube)
-[![bundle size](https://img.shields.io/bundlephobia/minzip/tytube?label=minzip)](https://bundlephobia.com/package/tytube)
+[![npm version](https://img.shields.io/npm/v/@hallelx/tytube?color=cb3837&logo=npm&label=npm)](https://www.npmjs.com/package/@hallelx/tytube)
+[![npm downloads](https://img.shields.io/npm/dm/@hallelx/tytube?color=cb3837&logo=npm)](https://www.npmjs.com/package/@hallelx/tytube)
+[![bundle size](https://img.shields.io/bundlephobia/minzip/@hallelx/tytube?label=minzip)](https://bundlephobia.com/package/@hallelx/tytube)
 [![CI](https://img.shields.io/github/actions/workflow/status/hallelx2/tytube/ci.yml?branch=main&logo=github&label=CI)](https://github.com/hallelx2/tytube/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6?logo=typescript&logoColor=white)](tsconfig.json)
-[![Node](https://img.shields.io/node/v/tytube?logo=node.js&logoColor=white)](package.json)
+[![Node](https://img.shields.io/node/v/@hallelx/tytube?logo=node.js&logoColor=white)](package.json)
 [![Bun](https://img.shields.io/badge/Bun-ready-fbf0df?logo=bun&logoColor=black)](https://bun.sh)
 [![Tests](https://img.shields.io/badge/tests-45_passing-success?logo=vitest&logoColor=white)](tests)
 
@@ -35,16 +35,16 @@ Existing JS YouTube libraries either wrap a Python binary (`youtube-dl-exec`), d
 ## Install
 
 ```bash
-bun add tytube     # Bun
-npm install tytube # Node
-pnpm add tytube    # pnpm
-yarn add tytube    # Yarn
+bun add @hallelx/tytube     # Bun
+npm install @hallelx/tytube # Node
+pnpm add @hallelx/tytube    # pnpm
+yarn add @hallelx/tytube    # Yarn
 ```
 
 ## Quick start
 
 ```ts
-import { YouTube } from 'tytube';
+import { YouTube } from '@hallelx/tytube';
 
 const yt = new YouTube('https://youtu.be/lpFcNQpH81Q');
 await yt.prefetch();
@@ -77,7 +77,7 @@ console.log(yt.streamsSync.length);
 ## Playlists, channels, and search
 
 ```ts
-import { Playlist, Channel, Search } from 'tytube';
+import { Playlist, Channel, Search } from '@hallelx/tytube';
 
 // Playlist iteration — async iterable, lazily paged
 const playlist = new Playlist('https://www.youtube.com/playlist?list=PL...');
@@ -104,10 +104,10 @@ for (const yt of results) {
 ## CLI
 
 ```bash
-bunx tytube https://youtu.be/lpFcNQpH81Q --list
-bunx tytube https://youtu.be/lpFcNQpH81Q --list-captions
-bunx tytube https://youtu.be/lpFcNQpH81Q -c en -t ./captions
-bunx tytube --version
+bunx @hallelx/tytube https://youtu.be/lpFcNQpH81Q --list
+bunx @hallelx/tytube https://youtu.be/lpFcNQpH81Q --list-captions
+bunx @hallelx/tytube https://youtu.be/lpFcNQpH81Q -c en -t ./captions
+bunx @hallelx/tytube --version
 ```
 
 > Download flags (`-r`, `--itag`, `-a`, `-f`) are wired up but currently constrained by the cipher limitation below.
