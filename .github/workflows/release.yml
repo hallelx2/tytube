@@ -1,15 +1,22 @@
 name: Release
 
-# Publishes tytube to npm when a GitHub Release is published, OR when a tag
-# matching v* is pushed (whichever you prefer). Reuses the same NPM_TOKEN secret
-# pattern as the vectorless repo.
+# Verifies a release-tagged build passes typecheck + tests + bundle, then
+# performs an `npm publish --dry-run` as a final smoke test (validates auth
+# and the tarball without actually publishing).
 #
-# To cut a release:
-#   1. Bump the version in package.json (and src/version.ts).
-#   2. Commit + tag: `git tag v0.1.1 && git push --tags`
-#   3. (Optional) Create a GitHub Release pointing at the tag.
+# Real publishes are currently performed locally via `npm publish --access public`
+# because the GitHub Actions runner IP range is being rejected by npm with an
+# opaque 404 when using a granular access token to write to the @hallelx scope —
+# even though the same token works locally and even though the package is already
+# in the registry. The long-term fix is to switch to npm Trusted Publishing via
+# OIDC (no token at all), tracked for v0.2.
 #
-# The workflow runs the full test suite first, then publishes only if tests pass.
+# To cut a release today:
+#   1. Bump version in package.json + src/version.ts
+#   2. Commit, tag (`git tag v0.1.x`), push tag — this kicks off this workflow
+#   3. Once the verify job is green, run `npm publish --access public` from a
+#      local checkout
+#   4. Create the GitHub Release for changelog visibility
 
 on:
   push:
@@ -18,24 +25,15 @@ on:
   release:
     types: [published]
   workflow_dispatch:
-    inputs:
-      dry_run:
-        description: 'Run npm publish --dry-run only (no actual publish)'
-        type: boolean
-        default: false
 
 concurrency:
   group: release-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
-  publish:
-    name: Publish to npm
+  verify:
+    name: Verify release build
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write # for npm provenance
-
     steps:
       - uses: actions/checkout@v4
         with:
@@ -59,22 +57,10 @@ jobs:
       - name: Build
         run: npx --no-install tsup
 
-      - name: Verify package contents
+      - name: Verify package tarball
         run: npm pack --dry-run
 
-      - name: Publish (dry run)
-        if: github.event_name == 'workflow_dispatch' && inputs.dry_run
+      - name: Validate publish (dry run)
         run: npm publish --dry-run --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      # Provenance intentionally disabled for v0.1.x:
-      # token-based publish with --provenance was successfully signing the
-      # attestation but the subsequent package PUT was 404-ing with no clear
-      # diagnostic. Once the package name is claimed we can revisit adding
-      # `--provenance` back (GitHub trusted publishing is the long-term fix).
-      - name: Publish to npm
-        if: github.event_name != 'workflow_dispatch' || !inputs.dry_run
-        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
