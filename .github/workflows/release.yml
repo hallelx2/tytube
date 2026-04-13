@@ -68,8 +68,13 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      # Provenance intentionally disabled for v0.1.x:
+      # token-based publish with --provenance was successfully signing the
+      # attestation but the subsequent package PUT was 404-ing with no clear
+      # diagnostic. Once the package name is claimed we can revisit adding
+      # `--provenance` back (GitHub trusted publishing is the long-term fix).
       - name: Publish to npm
         if: github.event_name != 'workflow_dispatch' || !inputs.dry_run
-        run: npm publish --access public --provenance
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
