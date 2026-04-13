@@ -50,8 +50,16 @@
     "bun",
     "typescript"
   ],
-  "author": "",
+  "author": "hallelx2 <halleluyaholudele@gmail.com>",
   "license": "MIT",
+  "homepage": "https://github.com/hallelx2/tytube#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hallelx2/tytube.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hallelx2/tytube/issues"
+  },
   "engines": {
     "node": ">=18"
   },
